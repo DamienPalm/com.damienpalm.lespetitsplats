@@ -6,3 +6,5 @@
 git init
 git remote add origin HTTPS_REPO
 ```
+
+## Mise en place des dossiers
