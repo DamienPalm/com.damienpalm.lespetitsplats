@@ -80,3 +80,93 @@ body {
 .header__search-bar-form__button:hover .header__search-bar-form__button__button-icon {
     color: #1b1b1b;
 }
+
+.main {
+    background-color: #ededed;
+}
+
+.main__cards-section {
+    display: grid;
+    justify-content: center;
+    justify-items: center;
+    grid-template-columns: repeat(auto-fit, 23.75rem);
+    column-gap: 2.5rem;
+    row-gap: 4rem;
+    margin-top: 55px;
+}
+
+.main__cards-section__card {
+    height: 45rem;
+    border-radius: 21px;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    box-shadow: 0px 4px 34px 30px rgba(0, 0, 0, 0.04);
+}
+
+.main__cards-section__card__recipes-photo {
+    height: calc(100%/3);
+    object-fit: cover;
+    border-top-left-radius: 21px;
+    border-top-right-radius: 21px;
+}
+
+.main__cards-section__card__body-card {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding-inline: 1.5rem;
+}
+
+.main__cards-section__card__body-card__recipes-name {
+    font-family: "Anton", sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 28px;
+}
+
+.main__cards-section__card__body-card__recipes-description {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.main__cards-section__card__body-card__recipes-description__title {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 2px;
+    color: grey;
+}
+
+.main__cards-section__card__body-card__recipes-description__description {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    height: 100px;
+    overflow: hidden;
+}
+
+.main__cards-section__card__body-card__recipes-description__ingedients {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: 190px;
+
+}
+
+.main__cards-section__card__body-card__recipes-description__ingedients__items {
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 21px;
+}
+
+.main__cards-section__card__body-card__recipes-description__ingedients__items__quantity {
+    font-weight: 400;
+    font-size: 14px;
+    color: #7a7a7a;
+}
