@@ -1,7 +1,11 @@
+import UrlParamsManager from "./UrlParamsManager.js";
+
 class SearchManager {
   constructor(app) {
     this.app = app;
+    this.urlParams = new UrlParamsManager();
     this.searchTerm;
+    this.initializeFromUrl();
   }
 
   attachEventListeners() {
@@ -31,19 +35,37 @@ class SearchManager {
   }
 
   search(searchTerm) {
-    this.app.filteredRecipes = this.app.recipes.filter(
-      (recipe) =>
-        recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        recipe.appliance.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        recipe.ingredients.some((ing) =>
-          ing.ingredient.toLowerCase().includes(searchTerm.toLowerCase())
-        ) ||
-        recipe.ustensils.some((ustensil) =>
-          ustensil.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-    );
-    console.log("Résultat de la recherche :", this.app.filteredRecipes);
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    let searchType = "name";
 
+    this.app.filteredRecipes = this.app.recipes.filter((recipe) => {
+      switch (true) {
+        case recipe.name.toLowerCase().includes(lowerCaseSearchTerm):
+          searchType = "name";
+          return true;
+
+        case recipe.appliance.toLowerCase().includes(lowerCaseSearchTerm):
+          searchType = "appliance";
+          return true;
+
+        case recipe.ingredients.some((ingredient) =>
+          ingredient.ingredient.toLowerCase().includes(lowerCaseSearchTerm)
+        ):
+          searchType = "ingredient";
+          return true;
+
+        case recipe.ustensils.some((ustensil) =>
+          ustensil.toLowerCase().includes(lowerCaseSearchTerm)
+        ):
+          searchType = "ustensil";
+          return true;
+
+        default:
+          return false;
+      }
+    });
+
+    this.updateUrlWithSearch(searchType, searchTerm);
     this.app.render();
   }
 
@@ -112,6 +134,34 @@ class SearchManager {
     suggestionsContainer.innerHTML = "";
     searchForm.classList.remove("open-suggestions");
     suggestionsContainer.classList.remove("active");
+  }
+
+  updateUrlWithSearch(searchType, searchTerm) {
+    const url = new URL(window.location);
+    ["name", "ingredient", "applicance", "ustensil"].forEach((type) => {
+      url.searchParams.delete(type);
+    });
+
+    if (searchTerm) {
+      url.searchParams.set(searchType, encodeURIComponent(searchTerm));
+    }
+
+    window.history.pushState({}, "", url);
+  }
+
+  initializeFromUrl() {
+    const url = new URL(window.location);
+    const searchTypes = ["name", "ingredient", "appliance", "ustensil"];
+
+    for (const type of searchTypes) {
+      const searchTerm = url.searchParams.get(type);
+      if (searchTerm) {
+        document.getElementById("header__search-bar").value =
+          decodeURIComponent(searchTerm);
+        this.search(decodeURIComponent(searchTerm));
+        break;
+      }
+    }
   }
 }
 

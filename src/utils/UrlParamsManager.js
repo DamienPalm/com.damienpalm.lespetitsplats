@@ -1,6 +1,6 @@
 class UrlParamsManager {
   constructor() {
-    this.params = new UrlParamsManager(window.location.search);
+    this.params = new URLSearchParams(window.location.search);
   }
 
   get(name) {
@@ -39,3 +39,5 @@ class UrlParamsManager {
     history.pushState(null, "", newUrl);
   }
 }
+
+export default UrlParamsManager;
