@@ -44,6 +44,10 @@ body {
     position: relative;
 }
 
+.header__search-bar-form.open-suggestions {
+    border-radius: 11px 11px 0px 0px;
+}
+
 #header__search-bar {
     width: 100%;
     margin-left: 2rem;
@@ -79,6 +83,30 @@ body {
 
 .header__search-bar-form__button:hover .header__search-bar-form__button__button-icon {
     color: #1b1b1b;
+}
+
+.header__search-bar-suggestions {
+    display: none;
+    position: absolute;
+    width: 100%;
+    background-color: white;
+    z-index: 1;
+    top: 100%;
+    border-bottom-left-radius: 11px;
+    border-bottom-right-radius: 11px;
+}
+
+.header__search-bar-suggestions.active {
+    display: block;
+}
+
+.header__search-bar-suggestions p {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.header__search-bar-suggestions p:hover {
+    background-color: #FFD15B;
 }
 
 .main {
@@ -208,6 +236,7 @@ body {
 
 .main__cards-section__card {
     height: 45rem;
+    width: 100%;
     border-radius: 21px;
     background-color: #ffffff;
     display: flex;

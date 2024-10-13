@@ -2,6 +2,7 @@ import { recipes } from "../../public/data/recipes.js";
 import Filters from "../components/Filters.js";
 import Header from "../components/Header.js";
 import RecipeCard from "../components/RecipeCard.js";
+import SearchManager from "../utils/SearchManager.js";
 
 const App = {
   init() {
@@ -9,8 +10,8 @@ const App = {
     this.header = new Header();
     this.recipes = recipes;
     this.filteredRecipes = this.recipes;
+    this.searchManager = new SearchManager(this);
     this.render();
-    this.attachComponentEventListeners();
   },
 
   render() {
@@ -23,15 +24,15 @@ const App = {
       ${this.filters.render()}
       </section>
       <section class="main__cards-section">
-        ${this.recipes
+        ${this.filteredRecipes
           .map((recipe) => new RecipeCard(recipe).render())
           .join("")}
       </section
     </main>
     `;
-  },
 
-  attachComponentEventListeners() {},
+    this.searchManager.attachEventListeners();
+  },
 };
 
 document.addEventListener("DOMContentLoaded", () => App.init());
