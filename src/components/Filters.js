@@ -2,29 +2,27 @@ class Filters {
   constructor(recipes, displayedRecipesCount) {
     this.recipes = recipes;
     this.displayedRecipesCount = displayedRecipesCount;
-    this.categories = {
-      ingredients: this.getUniqueIngredients(),
-      appliances: this.getUniqueAppliances(),
-      ustensils: this.getUniqueUstensils(),
+    this.categories = this.getUniqueElements();
+  }
+
+  getUniqueElements() {
+    const ingredients = new Set();
+    const appliances = new Set();
+    const ustensils = new Set();
+
+    this.recipes.forEach((recipe) => {
+      recipe.ingredients.forEach((ingredient) =>
+        ingredients.add(ingredient.ingredient)
+      );
+      appliances.add(recipe.appliance);
+      recipe.ustensils.forEach((ustensil) => ustensils.add(ustensil));
+    });
+
+    return {
+      ingredients: Array.from(ingredients),
+      appliances: Array.from(appliances),
+      ustensils: Array.from(ustensils),
     };
-  }
-
-  getUniqueIngredients() {
-    return [
-      ...new Set(
-        this.recipes.flatMap((recipe) =>
-          recipe.ingredients.map((ing) => ing.ingredient)
-        )
-      ),
-    ];
-  }
-
-  getUniqueAppliances() {
-    return [...new Set(this.recipes.map((recipe) => recipe.appliance))];
-  }
-
-  getUniqueUstensils() {
-    return [...new Set(this.recipes.flatMap((recipe) => recipe.ustensils))];
   }
 
   render() {
@@ -42,8 +40,8 @@ class Filters {
 
   renderDropdown(category, items) {
     return `
-    <div class="main__filters-section__filters__dropdown">
-      <button role="button" class="main__filters-section__filters__dropdown__select" data-filter-category="${category}" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="sort-heading sort-button">
+    <div class="main__filters-section__filters__dropdown" data-filter-category="${category}">
+      <button role="button" class="main__filters-section__filters__dropdown__select" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="sort-heading sort-button">
         <span class="main__filters-section__filters__dropdown__select--selected">${category}</span>
         <i class="fa-solid fa-chevron-down chevron-down" aria-hidden="true"></i>
       </button>
@@ -67,6 +65,8 @@ class Filters {
     </div>
     `;
   }
+
+  attachEventListeners() {}
 }
 
 export default Filters;

@@ -155,10 +155,10 @@ body {
     left: 0;
     width: 100%;
     background-color: white;
-    border-radius: 0 0 4px 4px;
+    border-radius: 0 0 11px 11px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: none;
-    height: 319px;
+    max-height: 319px;
     overflow: scroll;
     scrollbar-width: none;
 }
@@ -168,12 +168,12 @@ body {
     flex-direction: column;
 }
 
-.main__filters-section__filters__dropdown__filter__filters-list__filter {
+.main__filters-section__filters__dropdown__filter__filters-list__item {
     padding: 10px 15px;
     cursor: pointer;
 }
 
-.main__filters-section__filters__dropdown__filter__filters-list__filter:hover {
+.main__filters-section__filters__dropdown__filter__filters-list__item:hover {
     background-color: #FFD15B;
 }
 
