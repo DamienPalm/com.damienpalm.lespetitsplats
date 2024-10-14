@@ -19,8 +19,11 @@ class SearchManager {
   handleSubmit(event) {
     event.preventDefault();
     const searchTerm = document.getElementById("header__search-bar").value;
-    console.log("Recherche soumise : ", searchTerm);
-    this.search(searchTerm);
+    if (searchTerm.length >= 3) {
+      this.search(searchTerm);
+    } else {
+      this.clearSearch();
+    }
   }
 
   handleInput(event) {
@@ -35,6 +38,11 @@ class SearchManager {
   }
 
   search(searchTerm) {
+    if (searchTerm.length < 3) {
+      this.clearSearch();
+      return;
+    }
+
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
     let searchType = "name";
 
@@ -66,6 +74,12 @@ class SearchManager {
     });
 
     this.updateUrlWithSearch(searchType, searchTerm);
+    this.app.render();
+  }
+
+  clearSearch() {
+    this.app.filteredRecipes = this.app.recipes;
+    this.updateUrlWithSearch("", "");
     this.app.render();
   }
 
