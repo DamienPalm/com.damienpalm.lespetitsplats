@@ -12,21 +12,24 @@ class Filters {
 
     this.recipes.forEach((recipe) => {
       recipe.ingredients.forEach((ingredient) =>
-        ingredients.add(ingredient.ingredient)
+        ingredients.add(ingredient.ingredient.toLowerCase())
       );
-      appliances.add(recipe.appliance);
-      recipe.ustensils.forEach((ustensil) => ustensils.add(ustensil));
+      appliances.add(recipe.appliance.toLowerCase());
+      recipe.ustensils.forEach((ustensil) =>
+        ustensils.add(ustensil.toLowerCase())
+      );
     });
 
     return {
-      ingredients: Array.from(ingredients),
-      appliances: Array.from(appliances),
-      ustensils: Array.from(ustensils),
+      Ingredients: Array.from(ingredients),
+      Appareils: Array.from(appliances),
+      Ustensiles: Array.from(ustensils),
     };
   }
 
   render() {
     return `
+    <section class="main__filters-section__filters-and-count">
       <section class="main__filters-section__filters">
         ${Object.entries(this.categories)
           .map(([category, items]) => this.renderDropdown(category, items))
@@ -35,6 +38,8 @@ class Filters {
       <p class="main__filters-section__recipes-counter">${
         this.displayedRecipesCount
       } recettes</p>
+    </section>
+    <section class="main__filters-section__tag"></section>
     `;
   }
 
@@ -52,7 +57,7 @@ class Filters {
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         </div>
-        <span class="main__filters-section__filters__dropdown__filtes__active-filter"></span>
+        <div class="main__filters-section__filters__dropdown__filter__active-filter"></div>
         <ul class="main__filters-section__filters__dropdown__filter__filters-list" role="listbox" aria-labelledby="sort-button">
         ${items
           .map(
@@ -64,6 +69,22 @@ class Filters {
       </div>
     </div>
     `;
+  }
+
+  renderTags(selectedTags) {
+    const tagSection = document.querySelector(".main__filters-section__tag");
+    tagSection.innerHTML = "";
+
+    selectedTags.forEach((tag) => {
+      const tagElement = document.createElement("div");
+      tagElement.classList.add("filter-tag");
+      tagElement.dataset.category = tag.category;
+      tagElement.innerHTML = `
+        ${tag.value}
+        <i class="fa-solid fa-xmark remove-tag"></i>
+      `;
+      tagSection.appendChild(tagElement);
+    });
   }
 
   attachEventListeners() {}

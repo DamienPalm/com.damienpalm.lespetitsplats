@@ -44,28 +44,28 @@ class SearchManager {
     }
 
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    let searchType = "name";
+    let searchType = "nom";
 
     this.app.filteredRecipes = this.app.recipes.filter((recipe) => {
       switch (true) {
         case recipe.name.toLowerCase().includes(lowerCaseSearchTerm):
-          searchType = "name";
+          searchType = "nom";
           return true;
 
         case recipe.appliance.toLowerCase().includes(lowerCaseSearchTerm):
-          searchType = "appliance";
+          searchType = "appareils";
           return true;
 
         case recipe.ingredients.some((ingredient) =>
           ingredient.ingredient.toLowerCase().includes(lowerCaseSearchTerm)
         ):
-          searchType = "ingredient";
+          searchType = "ingredients";
           return true;
 
         case recipe.ustensils.some((ustensil) =>
           ustensil.toLowerCase().includes(lowerCaseSearchTerm)
         ):
-          searchType = "ustensil";
+          searchType = "ustensiles";
           return true;
 
         default:
@@ -152,7 +152,7 @@ class SearchManager {
 
   updateUrlWithSearch(searchType, searchTerm) {
     const url = new URL(window.location);
-    ["name", "ingredient", "applicance", "ustensil"].forEach((type) => {
+    ["nom", "ingredients", "appareils", "ustensiles"].forEach((type) => {
       url.searchParams.delete(type);
     });
 
@@ -165,7 +165,7 @@ class SearchManager {
 
   initializeFromUrl() {
     const url = new URL(window.location);
-    const searchTypes = ["name", "ingredient", "appliance", "ustensil"];
+    const searchTypes = ["nom", "ingredients", "appareils", "ustensiles"];
 
     for (const type of searchTypes) {
       const searchTerm = url.searchParams.get(type);

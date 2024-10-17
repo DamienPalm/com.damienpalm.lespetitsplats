@@ -113,7 +113,7 @@ body {
     background-color: #ededed;
 }
 
-.main__filters-section {
+.main__filters-section__filters-and-count {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -143,6 +143,10 @@ body {
     align-items: center;
     gap: 63px;
     cursor: pointer;
+}
+
+.chevron-down.chevron-up {
+    animation: rotate 300ms forwards;
 }
 
 .main__filters-section__filters__dropdown__select.open {
@@ -224,6 +228,23 @@ body {
     font-family: "Anton", sans-serif;
     font-size: 21px;
     line-height: 31px;
+}
+
+.main__filters-section__tag {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 21px;
+    margin-inline: 104px;
+    margin-top: 21px;
+}
+
+.filter-tag {
+    display: flex;
+    gap: 60px;
+    background-color: #FFD15B;
+    padding: 17px 18px;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
 .main__cards-section {
@@ -321,5 +342,15 @@ body {
 
     100% {
         transform: scaleY(1);
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotateZ(0deg);
+    }
+
+    100% {
+        transform: rotateZ(180deg);
     }
 }
