@@ -74,13 +74,13 @@ class SearchManager {
     });
 
     this.updateUrlWithSearch(searchType, searchTerm);
-    this.app.render();
+    this.app.filterManager.filterRecipes();
   }
 
   clearSearch() {
-    this.app.filteredRecipes = this.app.recipes;
+    this.searchTerm = "";
     this.updateUrlWithSearch("", "");
-    this.app.render();
+    this.app.filterManager.filterRecipes();
   }
 
   updateSuggestions(searchTerm) {
@@ -152,11 +152,19 @@ class SearchManager {
 
   updateUrlWithSearch(searchType, searchTerm) {
     const url = new URL(window.location);
-    ["nom", "ingredients", "appareils", "ustensiles"].forEach((type) => {
-      url.searchParams.delete(type);
+    const filterParams = {};
+    ["ingredients", "appareils", "ustensiles"].forEach((type) => {
+      const value = url.searchParams.get(type);
+      if (value) filterParams[type] = value;
     });
 
-    if (searchTerm) {
+    url.search = "";
+
+    Object.entries(filterParams).forEach(([key, value]) => {
+      url.searchParams.set(key, value);
+    });
+
+    if (searchTerm && searchTerm.length >= 3) {
       url.searchParams.set(searchType, encodeURIComponent(searchTerm));
     }
 

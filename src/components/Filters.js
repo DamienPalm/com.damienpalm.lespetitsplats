@@ -27,7 +27,17 @@ class Filters {
     };
   }
 
+  updateRecipeCount(count) {
+    const countElement = document.querySelector(
+      ".main__filters-section__recipes-counter"
+    );
+    if (countElement) {
+      countElement.textContent = `${count} recette${count > 1 ? "s" : ""}`;
+    }
+  }
+
   render() {
+    this.updateRecipeCount(this.displayedRecipesCount);
     return `
     <section class="main__filters-section__filters-and-count">
       <section class="main__filters-section__filters">
@@ -35,9 +45,7 @@ class Filters {
           .map(([category, items]) => this.renderDropdown(category, items))
           .join("")}
       </section>
-      <p class="main__filters-section__recipes-counter">${
-        this.displayedRecipesCount
-      } recettes</p>
+      <p class="main__filters-section__recipes-counter"></p>
     </section>
     <section class="main__filters-section__tag"></section>
     `;

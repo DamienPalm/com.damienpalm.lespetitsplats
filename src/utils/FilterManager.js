@@ -3,6 +3,7 @@ class FilterManager {
     this.app = app;
     this.categories = ["Ingredients", "Appareils", "Ustensiles"];
     this.selectedTags = [];
+    this.searchManager = app.searchManager;
     this.initializeFromUrl();
   }
 
@@ -123,8 +124,23 @@ class FilterManager {
   }
 
   filterRecipes() {
+    const searchTerm = this.app.searchManager.searchTerm
+      ? this.app.searchManager.searchTerm.toLowerCase()
+      : "";
+
     this.app.filteredRecipes = this.app.recipes.filter((recipe) => {
-      return this.selectedTags.every((tag) => {
+      const matchesSearch =
+        searchTerm === "" ||
+        recipe.name.toLowerCase().includes(searchTerm) ||
+        recipe.appliance.toLowerCase().includes(searchTerm) ||
+        recipe.ingredients.some((ing) =>
+          ing.ingredient.toLowerCase().includes(searchTerm)
+        ) ||
+        recipe.ustensils.some((ustensil) =>
+          ustensil.toLowerCase().includes(searchTerm)
+        );
+
+      const matchesFilters = this.selectedTags.every((tag) => {
         switch (tag.category) {
           case "Ingredients":
             return recipe.ingredients.some(
@@ -142,11 +158,13 @@ class FilterManager {
             return true;
         }
       });
+
+      return matchesSearch && matchesFilters;
     });
 
     this.updateUrlWithFilter();
     this.app.filters.renderTags(this.selectedTags);
-    this.app.render();
+    this.app.updateRecipeCards();
   }
 
   updateUrlWithFilter() {

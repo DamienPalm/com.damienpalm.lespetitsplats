@@ -26,16 +26,32 @@ const App = {
       <section class="main__filters-section">
       ${this.filters.render()}
       </section>
-      <section class="main__cards-section">
-        ${this.filteredRecipes
-          .map((recipe) => new RecipeCard(recipe).render())
-          .join("")}
+      <section class="main__cards-section" id="recipe-cards-container">
+        ${this.renderRecipeCards()}
       </section
     </main>
     `;
 
     this.searchManager.attachEventListeners();
     this.filterManager.attachEventListeners();
+    this.updateRecipeCount();
+  },
+
+  renderRecipeCards() {
+    return this.filteredRecipes
+      .map((recipe) => new RecipeCard(recipe).render())
+      .join("");
+  },
+
+  updateRecipeCards() {
+    const cardsContainer = document.getElementById("recipe-cards-container");
+    cardsContainer.innerHTML = this.renderRecipeCards();
+    this.updateRecipeCount();
+  },
+
+  updateRecipeCount() {
+    const count = this.filteredRecipes.length;
+    this.filters.updateRecipeCount(count);
   },
 };
 
