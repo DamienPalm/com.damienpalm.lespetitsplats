@@ -7,6 +7,28 @@ class FilterManager {
     this.initializeFromUrl();
   }
 
+  initializeFromUrl() {
+    const url = new URL(window.location);
+    const categories = ["ingredients", "appareils", "ustensiles"];
+
+    categories.forEach((category) => {
+      const values = url.searchParams.get(category);
+      if (values) {
+        values.split(",").forEach((value) => {
+          this.addTag(
+            category.charAt(0).toUpperCase() + category.slice(1),
+            decodeURIComponent(value)
+          );
+        });
+      }
+    });
+
+    if (this.selectedTags.length > 0) {
+      this.app.filters.renderTags(this.selectedTags);
+      this.filterRecipes();
+    }
+  }
+
   attachEventListeners() {
     this.categories.forEach((category) => {
       const dropdown = document.querySelector(
@@ -75,6 +97,27 @@ class FilterManager {
       .join("");
   }
 
+  updateFilterOptions() {
+    const currentRecipes = this.app.filteredRecipes;
+    const availableIngredients = new Set();
+    const availableAppliances = new Set();
+    const availableUstensils = new Set();
+
+    currentRecipes.forEach((recipe) => {
+      recipe.ingredients.forEach((ingredient) =>
+        availableIngredients.add(ingredient.ingredient.toLowerCase())
+      );
+      availableAppliances.add(recipe.appliance.toLowerCase());
+      recipe.ustensils.forEach((ustensil) =>
+        availableUstensils.add(ustensil.toLowerCase())
+      );
+    });
+
+    this.updateFilterList("Ingredients", [...availableIngredients]);
+    this.updateFilterList("Appareils", [...availableAppliances]);
+    this.updateFilterList("Ustensiles", [...availableUstensils]);
+  }
+
   handleFilterSelection(event, category) {
     if (
       event.target.classList.contains(
@@ -97,6 +140,7 @@ class FilterManager {
       this.app.filters.renderTags(this.selectedTags);
       this.attachRemoveTagListeners();
       this.filterRecipes();
+      this.updateUrlWithFilter();
     }
   }
 
@@ -104,6 +148,8 @@ class FilterManager {
     this.selectedTags = this.selectedTags.filter(
       (tag) => !(tag.category === category && tag.value === value)
     );
+
+    this.updateUrlWithFilter();
     this.app.filters.renderTags(this.selectedTags);
     this.filterRecipes();
   }
@@ -128,47 +174,96 @@ class FilterManager {
       ? this.app.searchManager.searchTerm.toLowerCase()
       : "";
 
-    this.app.filteredRecipes = this.app.recipes.filter((recipe) => {
-      const matchesSearch =
-        searchTerm === "" ||
-        recipe.name.toLowerCase().includes(searchTerm) ||
-        recipe.appliance.toLowerCase().includes(searchTerm) ||
-        recipe.ingredients.some((ing) =>
-          ing.ingredient.toLowerCase().includes(searchTerm)
-        ) ||
-        recipe.ustensils.some((ustensil) =>
-          ustensil.toLowerCase().includes(searchTerm)
-        );
+    this.app.filteredRecipes = [];
 
-      const matchesFilters = this.selectedTags.every((tag) => {
+    for (let i = 0; i < this.app.recipes.length; i++) {
+      const recipe = this.app.recipes[i];
+      let matchesSearch = false;
+      let matchesFilters = true;
+
+      if (searchTerm === "") {
+        matchesSearch = true;
+      } else {
+        if (
+          recipe.name.toLowerCase().includes(searchTerm) ||
+          recipe.appliance.toLowerCase().includes(searchTerm)
+        ) {
+          matchesSearch = true;
+        } else {
+          for (let j = 0; j < recipe.ingredients.length; j++) {
+            if (
+              recipe.ingredients[j].ingredient
+                .toLowerCase()
+                .includes(searchTerm)
+            ) {
+              matchesSearch = true;
+              break;
+            }
+          }
+          if (!matchesSearch) {
+            for (let k = 0; k < recipe.ustensils.length; k++) {
+              if (recipe.ustensils[k].toLowerCase().includes(searchTerm)) {
+                matchesSearch = true;
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      for (let l = 0; l < this.selectedTags.length; l++) {
+        const tag = this.selectedTags[l];
+        let tagMatches = false;
+
         switch (tag.category) {
           case "Ingredients":
-            return recipe.ingredients.some(
-              (ingredient) =>
-                ingredient.ingredient.toLowerCase() === tag.value.toLowerCase()
-            );
+            for (let m = 0; m < recipe.ingredients.length; m++) {
+              if (
+                recipe.ingredients[m].ingredient.toLowerCase() ===
+                tag.value.toLowerCase()
+              ) {
+                tagMatches = true;
+                break;
+              }
+            }
+            break;
           case "Appareils":
-            return recipe.appliance.toLowerCase() === tag.value.toLowerCase();
+            if (recipe.appliance.toLowerCase() === tag.value.toLowerCase()) {
+              tagMatches = true;
+            }
+            break;
           case "Ustensiles":
-            return recipe.ustensils.some(
-              (ustensil) => ustensil.toLowerCase() === tag.value.toLowerCase()
-            );
-
-          default:
-            return true;
+            for (let n = 0; n < recipe.ustensils.length; n++) {
+              if (
+                recipe.ustensils[n].toLowerCase() === tag.value.toLowerCase()
+              ) {
+                tagMatches = true;
+                break;
+              }
+            }
+            break;
         }
-      });
 
-      return matchesSearch && matchesFilters;
-    });
+        if (!tagMatches) {
+          matchesFilters = false;
+          break;
+        }
+      }
 
-    this.updateUrlWithFilter();
+      if (matchesSearch && matchesFilters) {
+        this.app.filteredRecipes.push(recipe);
+      }
+    }
+
     this.app.filters.renderTags(this.selectedTags);
+    this.updateFilterOptions();
+    this.updateUrlWithFilter();
     this.app.updateRecipeCards();
   }
 
   updateUrlWithFilter() {
     const url = new URL(window.location);
+
     url.searchParams.delete("ingredients");
     url.searchParams.delete("appareils");
     url.searchParams.delete("ustensiles");
@@ -176,35 +271,15 @@ class FilterManager {
     this.selectedTags.forEach((tag) => {
       const param = tag.category.toLowerCase();
       const existingValue = url.searchParams.get(param);
+
       const newValue = existingValue
-        ? `${existingValue}, ${encodeURIComponent(tag.value)}`
+        ? `${existingValue}+${encodeURIComponent(tag.value)}`
         : encodeURIComponent(tag.value);
+
       url.searchParams.set(param, newValue);
     });
 
     window.history.pushState({}, "", url);
-  }
-
-  initializeFromUrl() {
-    const url = new URL(window.location);
-    const categories = ["ingredients", "appareils", "ustensiles"];
-
-    categories.forEach((category) => {
-      const values = url.searchParams.get(category);
-      if (values) {
-        values.split(",").forEach((value) => {
-          this.addTag(
-            category.charAt(0).toUpperCase() + category.slice(1),
-            decodeURIComponent(value)
-          );
-        });
-      }
-    });
-
-    if (this.selectedTags.length > 0) {
-      this.app.filters.renderTags(this.selectedTags);
-      this.filterRecipes();
-    }
   }
 }
 

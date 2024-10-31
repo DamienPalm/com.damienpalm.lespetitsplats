@@ -45,36 +45,58 @@ class SearchManager {
 
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
     let searchType = "nom";
+    this.app.filteredRecipes = [];
 
-    this.app.filteredRecipes = this.app.recipes.filter((recipe) => {
-      switch (true) {
-        case recipe.name.toLowerCase().includes(lowerCaseSearchTerm):
-          searchType = "nom";
-          return true;
+    for (let i = 0; i < this.app.recipes.length; i++) {
+      const recipe = this.app.recipes[i];
+      let isMatch = false;
 
-        case recipe.appliance.toLowerCase().includes(lowerCaseSearchTerm):
-          searchType = "appareils";
-          return true;
-
-        case recipe.ingredients.some((ingredient) =>
-          ingredient.ingredient.toLowerCase().includes(lowerCaseSearchTerm)
-        ):
-          searchType = "ingredients";
-          return true;
-
-        case recipe.ustensils.some((ustensil) =>
-          ustensil.toLowerCase().includes(lowerCaseSearchTerm)
-        ):
-          searchType = "ustensiles";
-          return true;
-
-        default:
-          return false;
+      if (recipe.name.toLowerCase().includes(lowerCaseSearchTerm)) {
+        searchType = "nom";
+        isMatch = true;
       }
-    });
 
-    this.updateUrlWithSearch(searchType, searchTerm);
+      if (
+        !isMatch &&
+        recipe.appliance.toLowerCase().includes(lowerCaseSearchTerm)
+      ) {
+        searchType = "appareils";
+        isMatch = true;
+      }
+
+      if (!isMatch) {
+        for (let j = 0; j < recipe.ingredients.length; j++) {
+          if (
+            recipe.ingredients[j].ingredient
+              .toLowerCase()
+              .includes(lowerCaseSearchTerm)
+          ) {
+            searchType = "ingredients";
+            isMatch = true;
+            break;
+          }
+        }
+      }
+
+      if (!isMatch) {
+        for (let k = 0; k < recipe.ustensils.length; k++) {
+          if (recipe.ustensils[k].toLowerCase().includes(lowerCaseSearchTerm)) {
+            searchType = "ustensiles";
+            isMatch = true;
+            break;
+          }
+        }
+      }
+
+      if (isMatch) {
+        this.app.filteredRecipes.push(recipe);
+      }
+    }
+
     this.app.filterManager.filterRecipes();
+    this.app.filterManager.updateFilterOptions();
+    this.updateUrlWithSearch(searchType, searchTerm);
+    this.clearSuggestions();
   }
 
   clearSearch() {
@@ -137,7 +159,6 @@ class SearchManager {
 
   selectSuggestion(suggestion) {
     this.search(suggestion);
-    this.clearSuggestions();
   }
 
   clearSuggestions() {
@@ -153,6 +174,7 @@ class SearchManager {
   updateUrlWithSearch(searchType, searchTerm) {
     const url = new URL(window.location);
     const filterParams = {};
+
     ["ingredients", "appareils", "ustensiles"].forEach((type) => {
       const value = url.searchParams.get(type);
       if (value) filterParams[type] = value;
