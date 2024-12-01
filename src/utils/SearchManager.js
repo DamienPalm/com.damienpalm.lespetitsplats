@@ -1,11 +1,7 @@
-import UrlParamsManager from "./UrlParamsManager.js";
-
 class SearchManager {
   constructor(app) {
     this.app = app;
-    this.urlParams = new UrlParamsManager();
     this.searchTerm;
-    this.initializeFromUrl();
   }
 
   attachEventListeners() {
@@ -73,13 +69,12 @@ class SearchManager {
       }
     });
 
-    this.updateUrlWithSearch(searchType, searchTerm);
+    this.clearSuggestions();
     this.app.filterManager.filterRecipes();
   }
 
   clearSearch() {
     this.searchTerm = "";
-    this.updateUrlWithSearch("", "");
     this.app.filterManager.filterRecipes();
   }
 
@@ -148,42 +143,6 @@ class SearchManager {
     suggestionsContainer.innerHTML = "";
     searchForm.classList.remove("open-suggestions");
     suggestionsContainer.classList.remove("active");
-  }
-
-  updateUrlWithSearch(searchType, searchTerm) {
-    const url = new URL(window.location);
-    const filterParams = {};
-    ["ingredients", "appareils", "ustensiles"].forEach((type) => {
-      const value = url.searchParams.get(type);
-      if (value) filterParams[type] = value;
-    });
-
-    url.search = "";
-
-    Object.entries(filterParams).forEach(([key, value]) => {
-      url.searchParams.set(key, value);
-    });
-
-    if (searchTerm && searchTerm.length >= 3) {
-      url.searchParams.set(searchType, encodeURIComponent(searchTerm));
-    }
-
-    window.history.pushState({}, "", url);
-  }
-
-  initializeFromUrl() {
-    const url = new URL(window.location);
-    const searchTypes = ["nom", "ingredients", "appareils", "ustensiles"];
-
-    for (const type of searchTypes) {
-      const searchTerm = url.searchParams.get(type);
-      if (searchTerm) {
-        document.getElementById("header__search-bar").value =
-          decodeURIComponent(searchTerm);
-        this.search(decodeURIComponent(searchTerm));
-        break;
-      }
-    }
   }
 }
 

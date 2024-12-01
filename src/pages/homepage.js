@@ -20,16 +20,19 @@ const App = {
   render() {
     const displayedRecipesCount = this.filteredRecipes.length;
     this.filters = new Filters(this.recipes, displayedRecipesCount);
+
+    console.log("filteredRecipes");
+
     this.rootElement.innerHTML = `
-    ${this.header.render()}
-    <main class="main">
-      <section class="main__filters-section">
-      ${this.filters.render()}
-      </section>
-      <section class="main__cards-section" id="recipe-cards-container">
-        ${this.renderRecipeCards()}
-      </section
-    </main>
+      ${this.header.render()}
+      <main class="main">
+        <section class="main__filters-section">
+        ${this.filters.render()}
+        </section>
+        <section class="main__cards-section" id="recipe-cards-container">
+          ${this.renderRecipeCards()}
+        </section
+      </main>
     `;
 
     this.searchManager.attachEventListeners();

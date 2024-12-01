@@ -38,6 +38,7 @@ class Filters {
 
   render() {
     this.updateRecipeCount(this.displayedRecipesCount);
+
     return `
     <section class="main__filters-section__filters-and-count">
       <section class="main__filters-section__filters">
