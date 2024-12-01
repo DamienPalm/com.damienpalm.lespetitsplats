@@ -74,6 +74,27 @@ class FilterManager {
       .join("");
   }
 
+  updateFilterOptions() {
+    const currentRecipes = this.app.filteredRecipes;
+    const availableIngredients = new Set();
+    const availableAppliances = new Set();
+    const availableUstensils = new Set();
+
+    currentRecipes.forEach((recipe) => {
+      recipe.ingredients.forEach((ingredient) =>
+        availableIngredients.add(ingredient.ingredient.toLowerCase())
+      );
+      availableAppliances.add(recipe.appliance.toLowerCase());
+      recipe.ustensils.forEach((ustensil) =>
+        availableUstensils.add(ustensil.toLowerCase())
+      );
+    });
+
+    this.updateFilterList("Ingredients", [...availableIngredients]);
+    this.updateFilterList("Appareils", [...availableAppliances]);
+    this.updateFilterList("Ustensiles", [...availableUstensils]);
+  }
+
   handleFilterSelection(event, category) {
     if (
       event.target.classList.contains(
@@ -162,6 +183,7 @@ class FilterManager {
     });
 
     this.app.filters.renderTags(this.selectedTags);
+    this.updateFilterOptions();
     this.app.updateRecipeCards();
   }
 }
