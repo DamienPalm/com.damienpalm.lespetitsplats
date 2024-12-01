@@ -4,29 +4,6 @@ class FilterManager {
     this.categories = ["Ingredients", "Appareils", "Ustensiles"];
     this.selectedTags = [];
     this.searchManager = app.searchManager;
-    this.initializeFromUrl();
-  }
-
-  initializeFromUrl() {
-    const url = new URL(window.location);
-    const categories = ["ingredients", "appareils", "ustensiles"];
-
-    categories.forEach((category) => {
-      const values = url.searchParams.get(category);
-      if (values) {
-        values.split(",").forEach((value) => {
-          this.addTag(
-            category.charAt(0).toUpperCase() + category.slice(1),
-            decodeURIComponent(value)
-          );
-        });
-      }
-    });
-
-    if (this.selectedTags.length > 0) {
-      this.app.filters.renderTags(this.selectedTags);
-      this.filterRecipes();
-    }
   }
 
   attachEventListeners() {
@@ -257,29 +234,7 @@ class FilterManager {
 
     this.app.filters.renderTags(this.selectedTags);
     this.updateFilterOptions();
-    this.updateUrlWithFilter();
     this.app.updateRecipeCards();
-  }
-
-  updateUrlWithFilter() {
-    const url = new URL(window.location);
-
-    url.searchParams.delete("ingredients");
-    url.searchParams.delete("appareils");
-    url.searchParams.delete("ustensiles");
-
-    this.selectedTags.forEach((tag) => {
-      const param = tag.category.toLowerCase();
-      const existingValue = url.searchParams.get(param);
-
-      const newValue = existingValue
-        ? `${existingValue}+${encodeURIComponent(tag.value)}`
-        : encodeURIComponent(tag.value);
-
-      url.searchParams.set(param, newValue);
-    });
-
-    window.history.pushState({}, "", url);
   }
 }
 
