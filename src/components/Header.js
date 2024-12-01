@@ -13,7 +13,7 @@ class Header {
         <h1 class="header__main-title">Cherchez parmi plus de 1500 recettes du quotidien, simples et délicieuses</h1>
         <form action="" method="get" class="header__search-bar-form">
           <label for="header__search-bar"></label>
-          <input type="text" name="search-bar" id="header__search-bar" placeholder="Recherchez une recette, un ingrédient, ...">
+          <input type="search" name="search-bar" id="header__search-bar" placeholder="Recherchez une recette, un ingrédient, ...">
           <button class="header__search-bar-form__button" type="submit">
             <i class="fa-solid fa-magnifying-glass header__search-bar-form__button__button-icon"></i>
           </button>
