@@ -125,8 +125,6 @@ class FilterManager {
     this.selectedTags = this.selectedTags.filter(
       (tag) => !(tag.category === category && tag.value === value)
     );
-
-    this.updateUrlWithFilter();
     this.app.filters.renderTags(this.selectedTags);
     this.filterRecipes();
   }
