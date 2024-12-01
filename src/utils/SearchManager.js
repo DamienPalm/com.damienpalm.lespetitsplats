@@ -153,6 +153,10 @@ class SearchManager {
   }
 
   selectSuggestion(suggestion) {
+    const searchInput = document.getElementById("header__search-bar");
+    searchInput.value = suggestion;
+    this.searchTerm = suggestion;
+    this.clearSuggestions();
     this.search(suggestion);
   }
 
