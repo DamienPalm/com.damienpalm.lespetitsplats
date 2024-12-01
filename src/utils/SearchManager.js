@@ -1,7 +1,6 @@
 class SearchManager {
   constructor(app) {
     this.app = app;
-    this.urlParams = new UrlParamsManager();
     this.searchTerm;
   }
 
