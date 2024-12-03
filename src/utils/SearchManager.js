@@ -71,7 +71,6 @@ class SearchManager {
 
   clearSearch() {
     this.searchTerm = "";
-    this.updateUrlWithSearch("", "");
     this.app.filterManager.filterRecipes();
   }
 
