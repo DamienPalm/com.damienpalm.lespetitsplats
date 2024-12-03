@@ -40,33 +40,15 @@ class SearchManager {
     }
 
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    let searchType = "nom";
 
     this.app.filteredRecipes = this.app.recipes.filter((recipe) => {
-      switch (true) {
-        case recipe.name.toLowerCase().includes(lowerCaseSearchTerm):
-          searchType = "nom";
-          return true;
-
-        case recipe.appliance.toLowerCase().includes(lowerCaseSearchTerm):
-          searchType = "appareils";
-          return true;
-
-        case recipe.ingredients.some((ingredient) =>
+      return (
+        recipe.name.toLowerCase().includes(lowerCaseSearchTerm) ||
+        recipe.description.toLowerCase().includes(lowerCaseSearchTerm) ||
+        recipe.ingredients.some((ingredient) =>
           ingredient.ingredient.toLowerCase().includes(lowerCaseSearchTerm)
-        ):
-          searchType = "ingredients";
-          return true;
-
-        case recipe.ustensils.some((ustensil) =>
-          ustensil.toLowerCase().includes(lowerCaseSearchTerm)
-        ):
-          searchType = "ustensiles";
-          return true;
-
-        default:
-          return false;
-      }
+        )
+      );
     });
 
     this.clearSuggestions();
@@ -93,12 +75,9 @@ class SearchManager {
     this.app.recipes.forEach((recipe) => {
       if (
         recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        recipe.appliance.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        recipe.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         recipe.ingredients.some((ing) =>
           ing.ingredient.toLowerCase().includes(searchTerm.toLowerCase())
-        ) ||
-        recipe.ustensils.some((ustensil) =>
-          ustensil.toLowerCase().includes(searchTerm.toLowerCase())
         )
       ) {
         recipeSuggestions.add(recipe.name);

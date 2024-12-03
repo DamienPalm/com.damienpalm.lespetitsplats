@@ -152,12 +152,9 @@ class FilterManager {
       const matchesSearch =
         searchTerm === "" ||
         recipe.name.toLowerCase().includes(searchTerm) ||
-        recipe.appliance.toLowerCase().includes(searchTerm) ||
+        recipe.description.toLowerCase().includes(searchTerm) ||
         recipe.ingredients.some((ing) =>
           ing.ingredient.toLowerCase().includes(searchTerm)
-        ) ||
-        recipe.ustensils.some((ustensil) =>
-          ustensil.toLowerCase().includes(searchTerm)
         );
 
       const matchesFilters = this.selectedTags.every((tag) => {
