@@ -40,58 +40,33 @@ class SearchManager {
     }
 
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    let searchType = "nom";
     this.app.filteredRecipes = [];
 
     for (let i = 0; i < this.app.recipes.length; i++) {
       const recipe = this.app.recipes[i];
-      let isMatch = false;
 
       if (recipe.name.toLowerCase().includes(lowerCaseSearchTerm)) {
-        searchType = "nom";
-        isMatch = true;
-      }
-
-      if (
-        !isMatch &&
-        recipe.appliance.toLowerCase().includes(lowerCaseSearchTerm)
+        this.app.filteredRecipes.push(recipe);
+      } else if (
+        recipe.description.toLowerCase().includes(lowerCaseSearchTerm)
       ) {
-        searchType = "appareils";
-        isMatch = true;
-      }
-
-      if (!isMatch) {
+        this.app.filteredRecipes.push(recipe);
+      } else {
         for (let j = 0; j < recipe.ingredients.length; j++) {
           if (
             recipe.ingredients[j].ingredient
               .toLowerCase()
               .includes(lowerCaseSearchTerm)
           ) {
-            searchType = "ingredients";
-            isMatch = true;
+            this.app.filteredRecipes.push(recipe);
             break;
           }
         }
-      }
-
-      if (!isMatch) {
-        for (let k = 0; k < recipe.ustensils.length; k++) {
-          if (recipe.ustensils[k].toLowerCase().includes(lowerCaseSearchTerm)) {
-            searchType = "ustensiles";
-            isMatch = true;
-            break;
-          }
-        }
-      }
-
-      if (isMatch) {
-        this.app.filteredRecipes.push(recipe);
       }
     }
 
-    this.app.filterManager.filterRecipes();
-    this.app.filterManager.updateFilterOptions();
     this.clearSuggestions();
+    this.app.filterManager.filterRecipes();
   }
 
   clearSearch() {
@@ -115,12 +90,9 @@ class SearchManager {
     this.app.recipes.forEach((recipe) => {
       if (
         recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        recipe.appliance.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        recipe.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         recipe.ingredients.some((ing) =>
           ing.ingredient.toLowerCase().includes(searchTerm.toLowerCase())
-        ) ||
-        recipe.ustensils.some((ustensil) =>
-          ustensil.toLowerCase().includes(searchTerm.toLowerCase())
         )
       ) {
         recipeSuggestions.add(recipe.name);

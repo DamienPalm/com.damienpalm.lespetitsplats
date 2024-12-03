@@ -161,7 +161,7 @@ class FilterManager {
       } else {
         if (
           recipe.name.toLowerCase().includes(searchTerm) ||
-          recipe.appliance.toLowerCase().includes(searchTerm)
+          recipe.description.toLowerCase().includes(searchTerm)
         ) {
           matchesSearch = true;
         } else {
@@ -173,14 +173,6 @@ class FilterManager {
             ) {
               matchesSearch = true;
               break;
-            }
-          }
-          if (!matchesSearch) {
-            for (let k = 0; k < recipe.ustensils.length; k++) {
-              if (recipe.ustensils[k].toLowerCase().includes(searchTerm)) {
-                matchesSearch = true;
-                break;
-              }
             }
           }
         }
